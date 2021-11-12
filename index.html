@@ -290,44 +290,96 @@ function createRemoveBtn(onClick){
     function List(props){
       return(
         <ul>
-          <li>LIST</li>  
+          
+          {props.items.map((item)=>(
+            <li key={item.id}>{item.name}</li>
+      ))}
+          
         </ul>
       );
     }
     class App extends React.Component {
+      componentDidMount(){
+        const {store} = this.props
+        store.subscribe(()=>this.forceUpdate())
+        }
+
+
+
       render(){
+        const {store} = this.props
+        const {todos,goals} = store.getState();
         return(
           <div>
-            <Todos/>
-            <Goals/>
+            <Todos todo={todos} store = {this.props.store}/>
+            <Goals goal={goals} store={this.props.store}/>
           </div>
         
       );
     }
   }
     class Todos extends React.Component {
+      
+      addItem = (e) => {
+        e.preventDefault()
+        const name = this.input.value
+        this.input.value = ''
+
+        this.props.store.dispatch(addTodoAction({
+        id: generateId(),
+        name,
+        complete: false,
+      }) )
+
+      }
       render(){
         return(
           <div>
-            TODOS
-            <List/>  
+            <h1>Todo List</h1>
+            <input type ='text'
+            placeholder ='add todo'
+            ref ={(input)=> this.input = input}
+            
+            />
+            <button onClick = {this.addItem}>Add Todo</button>
+
+
+
+            <List  items={this.props.todo} />  
           </div>
           
         );
       }
     }
     class Goals extends React.Component {
+      
+       addItem  = (e)=>{
+        e.preventDefault()
+        const name = this.input.value;
+        this.input.value = ''
+        this.props.store.dispatch(addGoalAction({
+          id:generateId(),
+          name,
+        }))
+      }
+      
       render(){
         return(
           <div>
-            GOALS
-            <List/>
+          <h1>Goals</h1>
+            <input type="text"
+            placeholder = 'Add Goal'
+            ref = {(input)=> this.input = input}
+            
+            />
+            <button onClick = {this.addItem}>Add Goal</button>
+            <List  items={this.props.goal}   />
           </div>
         );
       }
     }
 
-    ReactDOM.render(<App />, document.getElementById('app'))
+    ReactDOM.render(<App store={store}/>, document.getElementById('app'))
 
 
 
