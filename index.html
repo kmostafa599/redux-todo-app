@@ -292,7 +292,16 @@ function createRemoveBtn(onClick){
         <ul>
           
           {props.items.map((item)=>(
-            <li key={item.id}>{item.name}</li>
+            <li onClick={()=>{
+              props.toggleItem(item)
+               
+            }}
+             style={{textDecoration: item.complete?'line-through':'none'}}
+             key={item.id}>
+              {item.name}
+              <button onClick={()=>props.removeButton(item)}>X</button>
+              
+              </li>
       ))}
           
         </ul>
@@ -303,7 +312,6 @@ function createRemoveBtn(onClick){
         const {store} = this.props
         store.subscribe(()=>this.forceUpdate())
         }
-
 
 
       render(){
@@ -332,12 +340,21 @@ function createRemoveBtn(onClick){
       }) )
 
       }
+
+      
+      removeButton =(item)=>{
+          this.props.store.dispatch(removeTodoAction(item.id))
+        }
+
+      toggleItem = (item) =>{
+        this.props.store.dispatch(toggleTodoAction(item.id))
+      }  
       render(){
         return(
           <div>
             <h1>Todo List</h1>
             <input type ='text'
-            placeholder ='add todo'
+            placeholder ='Add Todo'
             ref ={(input)=> this.input = input}
             
             />
@@ -345,7 +362,7 @@ function createRemoveBtn(onClick){
 
 
 
-            <List  items={this.props.todo} />  
+            <List toggleItem={this.toggleItem} removeButton={this.removeButton} items={this.props.todo} />  
           </div>
           
         );
@@ -363,6 +380,12 @@ function createRemoveBtn(onClick){
         }))
       }
       
+      removeButton =(item)=>{
+          this.props.store.dispatch(removeGoalAction(item.id))
+        }
+        toggleItem = (item) =>{
+        this.props.store.dispatch(toggleGoalAction(item.id))
+      }  
       render(){
         return(
           <div>
@@ -373,7 +396,7 @@ function createRemoveBtn(onClick){
             
             />
             <button onClick = {this.addItem}>Add Goal</button>
-            <List  items={this.props.goal}   />
+            <List toggleItem={this.toggleItem} removeButton={this.removeButton} items={this.props.goal}   />
           </div>
         );
       }
